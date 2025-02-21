@@ -45,7 +45,7 @@ export default function HomeScreen() {
                 style={{ flexDirection: "column", marginBottom: 5 }}
               >
                 <Text style={styles.header}>{key}</Text>
-                <Text style={styles.text}>{value}</Text>
+                <Text style={styles.value}>{value}</Text>
               </View>
             ))}
           </View>
@@ -70,6 +70,11 @@ const styles = StyleSheet.create({
   },
   pagerView: {
     flex: 1,
+  },
+  value: {
+    color: "white",
+    fontSize: 24,
+    marginBottom: 10,
   },
   text: {
     color: "white",
