@@ -32,7 +32,7 @@ export default function HomeScreen() {
 
       setData(parsed.data);
 
-      router.push("../pager");
+      router.push("../colselection");
     } catch (error) {
       console.error("Error picking CSV file:", error);
     }

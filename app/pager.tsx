@@ -3,7 +3,7 @@ import PagerView from "react-native-pager-view";
 import { useCsvStore } from "@/store/store";
 
 export default function PagerScreen() {
-  const data = useCsvStore((state) => state.data); // Fetch from global state
+  const data = useCsvStore((state) => state.data);
 
   return (
     <View style={styles.container}>
