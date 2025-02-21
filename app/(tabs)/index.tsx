@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import * as DocumentPicker from "expo-document-picker";
 import * as Papa from "papaparse";
@@ -31,14 +31,23 @@ export default function HomeScreen() {
       console.error("Error picking CSV file:", error);
     }
   };
+  const headers = data.length > 0 ? Object.keys(data[0]) : [];
 
   return (
     <View style={styles.container}>
       <Button title="Pick CSV File" onPress={pickCSVFile} />
       <PagerView style={styles.pagerView} initialPage={0}>
         {data.map((content, index) => (
-          <View key={index}>
-            <Text style={styles.text}>{JSON.stringify(content)}</Text>
+          <View key={index} style={{ padding: 10 }}>
+            {Object.entries(content).map(([key, value]) => (
+              <View
+                key={key}
+                style={{ flexDirection: "column", marginBottom: 5 }}
+              >
+                <Text style={styles.header}>{key}</Text>
+                <Text style={styles.text}>{value}</Text>
+              </View>
+            ))}
           </View>
         ))}
       </PagerView>
@@ -47,6 +56,15 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderColor: "#ccc",
+    paddingVertical: 5,
+  },
+  header: { color: "#999999" },
+  cell: { flex: 1, padding: 8, textAlign: "center", color: "white" },
+
   container: {
     flex: 1,
   },
