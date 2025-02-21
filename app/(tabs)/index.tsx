@@ -36,12 +36,11 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Button title="Pick CSV File" onPress={pickCSVFile} />
       <PagerView style={styles.pagerView} initialPage={0}>
-        <View key="1">
-          <Text style={styles.text}>First page</Text>
-        </View>
-        <View key="2">
-          <Text style={styles.text}>Second page</Text>
-        </View>
+        {data.map((content, index) => (
+          <View key={index}>
+            <Text style={styles.text}>{JSON.stringify(content)}</Text>
+          </View>
+        ))}
       </PagerView>
     </View>
   );
