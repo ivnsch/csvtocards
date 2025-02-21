@@ -38,16 +38,18 @@ export default function HomeScreen() {
       <Button title="Pick CSV File" onPress={pickCSVFile} />
       <PagerView style={styles.pagerView} initialPage={0}>
         {data.map((content, index) => (
-          <View key={index} style={{ padding: 10 }}>
-            {Object.entries(content).map(([key, value]) => (
-              <View
-                key={key}
-                style={{ flexDirection: "column", marginBottom: 5 }}
-              >
-                <Text style={styles.header}>{key}</Text>
-                <Text style={styles.value}>{value}</Text>
-              </View>
-            ))}
+          <View key={index} style={styles.page}>
+            <View style={styles.card}>
+              {Object.entries(content).map(([key, value]) => (
+                <View
+                  key={key}
+                  style={{ flexDirection: "column", marginBottom: 5 }}
+                >
+                  <Text style={styles.header}>{key}</Text>
+                  <Text style={styles.value}>{value}</Text>
+                </View>
+              ))}
+            </View>
           </View>
         ))}
       </PagerView>
@@ -56,6 +58,24 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#121212", // Dark background
+  },
+  card: {
+    width: "90%",
+    padding: 20,
+    // backgroundColor: "white",
+    backgroundColor: "#1E1E1E", // Dark gray card
+
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5, // Android shadow
+  },
   row: {
     flexDirection: "row",
     borderBottomWidth: 1,
@@ -72,12 +92,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   value: {
-    color: "white",
+    color: "#EAEAEA", // Light text for contrast
     fontSize: 24,
     marginBottom: 10,
   },
   text: {
-    color: "white",
+    color: "#EAEAEA", // Light text for contrast
   },
   titleContainer: {
     flexDirection: "row",
