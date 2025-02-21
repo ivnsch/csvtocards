@@ -53,7 +53,7 @@ export default function ColSelectionScreen() {
         onPress={async () => {
           router.push("../pager");
         }}
-        title="Set prompt"
+        title="Start"
         color="#841584"
       />
     </View>
