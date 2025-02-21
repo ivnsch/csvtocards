@@ -50,6 +50,11 @@ export default function HomeScreen() {
                 </View>
               ))}
             </View>
+            <View style={styles.pageIndexContainer}>
+              <Text style={styles.pageIndex}>
+                {index + 1} / {data.length}
+              </Text>
+            </View>
           </View>
         ))}
       </PagerView>
@@ -114,5 +119,18 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: "absolute",
+  },
+  pageIndex: {
+    bottom: 20,
+    right: 30, // Pushes it to the right
+    textAlign: "right", // Ensures text alignment to the right
+    position: "absolute",
+
+    color: "#999999",
+    fontSize: 16,
+  },
+  pageIndexContainer: {
+    marginTop: 10,
+    alignSelf: "flex-end", // Aligns it to the right inside the card
   },
 });
