@@ -1,4 +1,4 @@
-import { Button, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as Papa from "papaparse";
 import { CsvRow, useStore } from "@/store/store";

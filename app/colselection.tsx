@@ -2,7 +2,6 @@ import {
   StyleSheet,
   View,
   Text,
-  Button,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
@@ -70,6 +69,7 @@ const styles = StyleSheet.create({
   header: {
     color: "white",
     marginBottom: 50,
+    fontSize: 20,
   },
   filter: {
     flex: 1,
