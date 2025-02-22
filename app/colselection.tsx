@@ -3,11 +3,10 @@ import {
   View,
   Text,
   Button,
-  FlatList,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useStore } from "@/store/store";
+import { Filters, useStore } from "@/store/store";
 import { useRouter } from "expo-router";
 
 export default function ColSelectionScreen() {
@@ -22,17 +21,12 @@ export default function ColSelectionScreen() {
         <View style={styles.headerRow}>
           <Text style={styles.header}>{"Select items to show"}</Text>
           {Object.keys(filters).map((header) => (
-            <View key={header} style={styles.headerContainer}>
-              <TouchableOpacity
-                onPress={() => toggleFilter(header)}
-                style={styles.checkbox}
-              >
-                {filters[header] ? (
-                  <Text style={styles.checkmark}>✔</Text>
-                ) : null}
-              </TouchableOpacity>
-              <Text style={styles.headerText}>{header}</Text>
-            </View>
+            <FilterRow
+              key={header}
+              header={header}
+              filters={filters}
+              toggleFilter={toggleFilter}
+            />
           ))}
         </View>
       </ScrollView>
@@ -47,6 +41,28 @@ export default function ColSelectionScreen() {
     </View>
   );
 }
+
+const FilterRow = ({
+  header,
+  filters,
+  toggleFilter,
+}: {
+  header: string;
+  filters: Filters;
+  toggleFilter: (header: string) => void;
+}) => {
+  return (
+    <View key={header} style={styles.headerContainer}>
+      <TouchableOpacity
+        onPress={() => toggleFilter(header)}
+        style={styles.checkbox}
+      >
+        {filters[header] ? <Text style={styles.checkmark}>✔</Text> : null}
+      </TouchableOpacity>
+      <Text style={styles.headerText}>{header}</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
