@@ -1,12 +1,8 @@
 import { Button, StyleSheet, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as Papa from "papaparse";
-import { useStore } from "@/store/store";
+import { CsvRow, useStore } from "@/store/store";
 import { useRouter } from "expo-router";
-
-type CsvRow = {
-  [key: string]: string;
-};
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -14,27 +10,16 @@ export default function HomeScreen() {
   const setData = useStore((state) => state.setData);
 
   const pickCSVFile = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: "text/csv",
-      });
-
-      if (result.canceled) return;
-
-      const fileUri = result.assets[0].uri;
-      const response = await fetch(fileUri);
-      const text = await response.text();
-
-      const parsed = Papa.parse<CsvRow>(text, { header: true });
-      console.log("parsed: " + JSON.stringify(parsed));
-
-      setData(parsed.data);
-
+    let data = await getAndParseCsv();
+    if (data) {
+      setData(data);
       router.push("../colselection");
-    } catch (error) {
-      console.error("Error picking CSV file:", error);
+    } else {
+      // TODO error handling
+      console.log("Couldn't parse any csv data");
     }
   };
+
   return (
     <View style={styles.container}>
       <Button title="Pick CSV File" onPress={pickCSVFile} />
@@ -47,3 +32,35 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+const getAndParseCsv = async (): Promise<CsvRow[] | undefined> => {
+  try {
+    const csvString = await getCsvAsString();
+    if (csvString) {
+      return parseCsv(csvString);
+    } else {
+      return;
+    }
+  } catch (error) {
+    console.error("Error picking CSV file:", error);
+    return;
+  }
+};
+
+const getCsvAsString = async (): Promise<string | null> => {
+  const result = await DocumentPicker.getDocumentAsync({
+    type: "text/csv",
+  });
+
+  if (result.canceled) return null;
+
+  const fileUri = result.assets[0].uri;
+  const response = await fetch(fileUri);
+  return await response.text();
+};
+
+const parseCsv = (csvString: string): CsvRow[] => {
+  const parsed = Papa.parse<CsvRow>(csvString, { header: true });
+  console.log("parsed: " + JSON.stringify(parsed));
+  return parsed.data;
+};
