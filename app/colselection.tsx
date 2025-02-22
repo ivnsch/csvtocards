@@ -18,8 +18,8 @@ export default function ColSelectionScreen() {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View style={styles.headerRow}>
-          <Text style={styles.header}>{"Select items to show"}</Text>
+        <View style={styles.containerInScrollView}>
+          <Text style={styles.header}>{"Select columns to show"}</Text>
           {Object.keys(filters).map((header) => (
             <FilterRow
               key={header}
@@ -31,13 +31,14 @@ export default function ColSelectionScreen() {
         </View>
       </ScrollView>
 
-      <Button
-        onPress={async () => {
-          router.push("../pager");
-        }}
-        title="Start"
-        color="#841584"
-      />
+      <View style={styles.startButton}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("../pager")}
+        >
+          <Text style={styles.buttonText}>Start</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -52,14 +53,14 @@ const FilterRow = ({
   toggleFilter: (header: string) => void;
 }) => {
   return (
-    <View key={header} style={styles.headerContainer}>
+    <View key={header} style={styles.filter}>
       <TouchableOpacity
         onPress={() => toggleFilter(header)}
         style={styles.checkbox}
       >
         {filters[header] ? <Text style={styles.checkmark}>✔</Text> : null}
       </TouchableOpacity>
-      <Text style={styles.headerText}>{header}</Text>
+      <Text style={styles.filterText}>{header}</Text>
     </View>
   );
 };
@@ -67,26 +68,34 @@ const FilterRow = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
+    marginTop: 100,
   },
   header: {
     color: "white",
+    marginBottom: 50,
   },
-  headerContainer: {
+  filter: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    width: "100%",
+    marginBottom: 20,
   },
-  headerRow: {
+  containerInScrollView: {
     flex: 1,
     flexDirection: "column",
     paddingBottom: 5,
+    alignItems: "flex-start",
+    width: "100%",
   },
-  headerText: {
-    flex: 1,
+  filterText: {
     fontWeight: "bold",
     textAlign: "center",
-    color: "#BB86FC",
+    color: "white",
+    marginStart: 10,
+    fontSize: 20,
   },
   row: {
     flexDirection: "row",
@@ -103,4 +112,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkmark: { color: "#BB86FC", fontSize: 20 },
+  startButton: {
+    bottom: 50,
+  },
+  button: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonText: {
+    fontSize: 18,
+    color: "white",
+    fontWeight: "bold",
+  },
 });
