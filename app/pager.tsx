@@ -1,6 +1,6 @@
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { useStore } from "@/store/store";
+import { CsvRow, useStore } from "@/store/store";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
@@ -10,31 +10,57 @@ export default function PagerScreen() {
     <View style={styles.container}>
       <PagerView style={styles.pagerView} initialPage={0}>
         {data.map((content, index) => (
-          <View key={index} style={styles.page}>
-            <View style={styles.card}>
-              {Object.entries(content)
-                .filter(([key, _]) => filters[key])
-                .map(([key, value]) => (
-                  <View
-                    key={key}
-                    style={{ flexDirection: "column", marginBottom: 5 }}
-                  >
-                    <Text style={styles.header}>{key}</Text>
-                    <Text style={styles.value}>{value}</Text>
-                  </View>
-                ))}
-            </View>
-            <View style={styles.pageIndexContainer}>
-              <Text style={styles.pageIndex}>
-                {index + 1} / {data.length}
-              </Text>
-            </View>
-          </View>
+          <Page
+            key={index}
+            content={content}
+            index={index}
+            filters={filters}
+            pageCount={data.length}
+          />
         ))}
       </PagerView>
     </View>
   );
 }
+
+const Page = ({
+  content,
+  index,
+  filters,
+  pageCount,
+}: {
+  content: CsvRow;
+  index: number;
+  filters: { [key: string]: boolean };
+  pageCount: number;
+}) => {
+  return (
+    <View style={styles.page}>
+      <View style={styles.card}>
+        {Object.entries(content)
+          .filter(([key, _]) => filters[key])
+          .map((entry) => (
+            <PageEntry entry={entry} />
+          ))}
+      </View>
+      <View style={styles.pageIndexContainer}>
+        <Text style={styles.pageIndex}>
+          {index + 1} / {pageCount}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const PageEntry = ({ entry }: { entry: [string, string] }) => {
+  const [key, value] = entry;
+  return (
+    <View key={key} style={{ flexDirection: "column", marginBottom: 5 }}>
+      <Text style={styles.header}>{key}</Text>
+      <Text style={styles.value}>{value}</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   page: {

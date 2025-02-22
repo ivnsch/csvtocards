@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type CsvRow = { [key: string]: string };
+export type CsvRow = { [key: string]: string };
 
 type Store = {
   data: CsvRow[];
