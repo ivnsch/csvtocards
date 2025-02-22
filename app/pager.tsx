@@ -1,6 +1,6 @@
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { CsvRow, useStore } from "@/store/store";
+import { CsvRow, Filters, useStore } from "@/store/store";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
@@ -31,7 +31,7 @@ const Page = ({
 }: {
   content: CsvRow;
   index: number;
-  filters: { [key: string]: boolean };
+  filters: Filters;
   pageCount: number;
 }) => {
   return (
