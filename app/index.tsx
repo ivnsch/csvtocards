@@ -19,8 +19,8 @@ export default function HomeScreen() {
   }, [navigation]);
 
   const pickCSVFile = async () => {
-    // let data = await getAndParseCsv();
-    let data = mockCsvData;
+    let data = await getAndParseCsv();
+    // let data = mockCsvData;
     if (data) {
       setData(data);
       router.push("../colselection");
