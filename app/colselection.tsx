@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#333",
   },
-  cell: { flex: 1, textAlign: "center", color: "#EAEAEA" },
   checkbox: {
     width: 30,
     height: 30,

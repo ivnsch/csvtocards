@@ -1,4 +1,4 @@
-import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
 
@@ -67,25 +67,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#121212", // Dark background
+    backgroundColor: "#121212",
   },
   card: {
     width: "90%",
     padding: 20,
-    // backgroundColor: "white",
-    backgroundColor: "#1E1E1E", // Dark gray card
+    backgroundColor: "#1E1E1E",
 
     borderRadius: 12,
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 5, // Android shadow
-  },
-  row: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-    paddingVertical: 5,
   },
   header: { color: "#999999" },
   cell: { flex: 1, padding: 8, textAlign: "center", color: "white" },
@@ -97,12 +90,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   value: {
-    color: "#EAEAEA", // Light text for contrast
+    color: "#EAEAEA",
     fontSize: 24,
     marginBottom: 10,
   },
   text: {
-    color: "#EAEAEA", // Light text for contrast
+    color: "#EAEAEA",
   },
   titleContainer: {
     flexDirection: "row",
@@ -113,17 +106,10 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
   pageIndex: {
     bottom: 20,
-    right: 30, // Pushes it to the right
-    textAlign: "right", // Ensures text alignment to the right
+    right: 30,
+    textAlign: "right",
     position: "absolute",
 
     color: "#999999",
@@ -131,6 +117,6 @@ const styles = StyleSheet.create({
   },
   pageIndexContainer: {
     marginTop: 10,
-    alignSelf: "flex-end", // Aligns it to the right inside the card
+    alignSelf: "flex-end",
   },
 });
