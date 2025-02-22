@@ -3,6 +3,7 @@ import * as DocumentPicker from "expo-document-picker";
 import * as Papa from "papaparse";
 import { CsvRow, useStore } from "@/store/store";
 import { useRouter } from "expo-router";
+import MyButton from "@/components/MyButton";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Button title="Pick CSV File" onPress={pickCSVFile} />
+      <MyButton title="Pick CSV File" onPress={pickCSVFile} />
     </View>
   );
 }

@@ -1,10 +1,16 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 
-const MyButton = ({ onPress }: { onPress: () => void }) => {
+const MyButton = ({
+  title,
+  onPress,
+}: {
+  title: string;
+  onPress: () => void;
+}) => {
   return (
     <TouchableOpacity style={styles.button} onPress={() => onPress()}>
-      <Text style={styles.buttonText}>Start</Text>
+      <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
 };

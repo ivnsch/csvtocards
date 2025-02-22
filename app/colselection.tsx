@@ -33,7 +33,7 @@ export default function ColSelectionScreen() {
       </ScrollView>
 
       <View style={styles.startButton}>
-        <MyButton onPress={() => router.push("../pager")} />
+        <MyButton title="Start" onPress={() => router.push("../pager")} />
       </View>
     </View>
   );
