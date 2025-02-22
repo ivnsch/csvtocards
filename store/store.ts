@@ -17,9 +17,8 @@ export const useStore = create<Store>((set) => ({
   setData: (newData) => {
     set({ data: newData });
     if (newData.length > 0) {
-      const headers = Object.keys(newData[0]);
       set((state) => ({
-        filters: Object.fromEntries(headers.map((header) => [header, true])), // Initialize filters
+        filters: toFilters(newData),
       }));
     }
   },
@@ -28,3 +27,8 @@ export const useStore = create<Store>((set) => ({
       filters: { ...state.filters, [header]: !state.filters[header] },
     })),
 }));
+
+const toFilters = (data: CsvRow[]): { [key: string]: boolean } => {
+  const headers = Object.keys(data[0]);
+  return Object.fromEntries(headers.map((header) => [header, true]));
+};
