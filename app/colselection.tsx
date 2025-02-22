@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Filters, useStore } from "@/store/store";
 import { useRouter } from "expo-router";
+import MyButton from "@/components/MyButton";
 
 export default function ColSelectionScreen() {
   const router = useRouter();
@@ -32,12 +33,7 @@ export default function ColSelectionScreen() {
       </ScrollView>
 
       <View style={styles.startButton}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("../pager")}
-        >
-          <Text style={styles.buttonText}>Start</Text>
-        </TouchableOpacity>
+        <MyButton onPress={() => router.push("../pager")} />
       </View>
     </View>
   );
@@ -114,22 +110,5 @@ const styles = StyleSheet.create({
   checkmark: { color: "#BB86FC", fontSize: 20 },
   startButton: {
     bottom: 50,
-  },
-  button: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  buttonText: {
-    fontSize: 18,
-    color: "white",
-    fontWeight: "bold",
   },
 });
