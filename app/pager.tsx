@@ -1,9 +1,9 @@
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { useCsvStore } from "@/store/store";
+import { useStore } from "@/store/store";
 
 export default function PagerScreen() {
-  const data = useCsvStore((state) => state.data);
+  const data = useStore((state) => state.data);
 
   return (
     <View style={styles.container}>

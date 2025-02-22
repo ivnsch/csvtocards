@@ -3,7 +3,7 @@ import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import * as DocumentPicker from "expo-document-picker";
 import * as Papa from "papaparse";
-import { useCsvStore } from "@/store/store";
+import { useStore } from "@/store/store";
 import { useRouter } from "expo-router";
 
 type CsvRow = {
@@ -13,7 +13,7 @@ type CsvRow = {
 export default function HomeScreen() {
   const router = useRouter();
 
-  const setData = useCsvStore((state) => state.setData);
+  const setData = useStore((state) => state.setData);
 
   const pickCSVFile = async () => {
     try {

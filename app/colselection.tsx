@@ -7,39 +7,27 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useCsvStore } from "@/store/store";
+import { useStore } from "@/store/store";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 
 export default function ColSelectionScreen() {
   const router = useRouter();
 
-  const data = useCsvStore((state) => state.data);
+  const filters = useStore((state) => state.filters);
+  const toggleFilter = useStore((state) => state.toggleFilter);
 
-  const headers = data.length > 0 ? Object.keys(data[0]) : [];
-
-  const [checkedColumns, setCheckedColumns] = useState<{
-    [key: string]: boolean;
-  }>(
-    Object.fromEntries(headers.map((header) => [header, true])) // Default: all checked
-  );
-
-  // Toggle checkbox state
-  const toggleColumn = (header: string) => {
-    setCheckedColumns((prev) => ({ ...prev, [header]: !prev[header] }));
-  };
   return (
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.headerRow}>
           <Text style={styles.header}>{"Select items to show"}</Text>
-          {headers.map((header) => (
+          {Object.keys(filters).map((header) => (
             <View key={header} style={styles.headerContainer}>
               <TouchableOpacity
-                onPress={() => toggleColumn(header)}
+                onPress={() => toggleFilter(header)}
                 style={styles.checkbox}
               >
-                {checkedColumns[header] ? (
+                {filters[header] ? (
                   <Text style={styles.checkmark}>✔</Text>
                 ) : null}
               </TouchableOpacity>
