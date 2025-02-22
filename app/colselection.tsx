@@ -6,14 +6,20 @@ import {
   ScrollView,
 } from "react-native";
 import { Filters, useStore } from "@/store/store";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import MyButton from "@/components/MyButton";
+import { useEffect } from "react";
 
 export default function ColSelectionScreen() {
+  const navigation = useNavigation();
   const router = useRouter();
 
   const filters = useStore((state) => state.filters);
   const toggleFilter = useStore((state) => state.toggleFilter);
+
+  useEffect(() => {
+    navigation.setOptions({ title: "Column selection" });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

@@ -4,11 +4,18 @@ import * as Papa from "papaparse";
 import { CsvRow, useStore } from "@/store/store";
 import { useRouter } from "expo-router";
 import MyButton from "@/components/MyButton";
+import { useNavigation } from "expo-router";
+import { useEffect } from "react";
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
   const router = useRouter();
 
   const setData = useStore((state) => state.setData);
+
+  useEffect(() => {
+    navigation.setOptions({ title: "File" });
+  }, [navigation]);
 
   const pickCSVFile = async () => {
     let data = await getAndParseCsv();
