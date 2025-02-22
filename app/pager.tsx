@@ -40,7 +40,7 @@ const Page = ({
         {Object.entries(content)
           .filter(([key, _]) => filters[key])
           .map((entry) => (
-            <PageEntry entry={entry} />
+            <PageEntry key={entry[0]} entry={entry} />
           ))}
       </View>
       <View style={styles.pageIndexContainer}>
@@ -55,7 +55,7 @@ const Page = ({
 const PageEntry = ({ entry }: { entry: [string, string] }) => {
   const [key, value] = entry;
   return (
-    <View key={key} style={{ flexDirection: "column", marginBottom: 5 }}>
+    <View style={{ flexDirection: "column", marginBottom: 5 }}>
       <Text style={styles.header}>{key}</Text>
       <Text style={styles.value}>{value}</Text>
     </View>
