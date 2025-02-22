@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import MyButton from "@/components/MyButton";
 import { useNavigation } from "expo-router";
 import { useEffect } from "react";
+import { mockCsvData } from "@/mock/mockdata";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -18,7 +19,8 @@ export default function HomeScreen() {
   }, [navigation]);
 
   const pickCSVFile = async () => {
-    let data = await getAndParseCsv();
+    // let data = await getAndParseCsv();
+    let data = mockCsvData;
     if (data) {
       setData(data);
       router.push("../colselection");
