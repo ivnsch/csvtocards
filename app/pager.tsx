@@ -4,6 +4,7 @@ import { useStore } from "@/store/store";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
+  const filters = useStore((state) => state.filters);
 
   return (
     <View style={styles.container}>
@@ -11,15 +12,17 @@ export default function PagerScreen() {
         {data.map((content, index) => (
           <View key={index} style={styles.page}>
             <View style={styles.card}>
-              {Object.entries(content).map(([key, value]) => (
-                <View
-                  key={key}
-                  style={{ flexDirection: "column", marginBottom: 5 }}
-                >
-                  <Text style={styles.header}>{key}</Text>
-                  <Text style={styles.value}>{value}</Text>
-                </View>
-              ))}
+              {Object.entries(content)
+                .filter(([key, _]) => filters[key])
+                .map(([key, value]) => (
+                  <View
+                    key={key}
+                    style={{ flexDirection: "column", marginBottom: 5 }}
+                  >
+                    <Text style={styles.header}>{key}</Text>
+                    <Text style={styles.value}>{value}</Text>
+                  </View>
+                ))}
             </View>
             <View style={styles.pageIndexContainer}>
               <Text style={styles.pageIndex}>
