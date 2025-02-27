@@ -8,6 +8,7 @@ import {
   View,
   KeyboardAvoidingView,
   Pressable,
+  Keyboard,
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
@@ -77,7 +78,10 @@ export default function PagerScreen() {
                   filters={filters}
                   pageCount={data.rows.length}
                   isDone={isDone(index)}
-                  onLongPress={toggleDoneAndSave}
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    toggleDoneAndSave();
+                  }}
                 />
               ))}
           </PagerView>
@@ -93,14 +97,14 @@ const Page = ({
   filters,
   pageCount,
   isDone,
-  onLongPress,
+  onPress,
 }: {
   content: CsvRow;
   index: number;
   filters: Filters;
   pageCount: number;
   isDone: boolean;
-  onLongPress: () => void;
+  onPress: () => void;
 }) => {
   const pageStyle = {
     ...styles.page,
@@ -108,7 +112,7 @@ const Page = ({
   };
 
   return (
-    <TouchableOpacity onPress={onLongPress} style={pageStyle} activeOpacity={1}>
+    <TouchableOpacity onPress={onPress} style={pageStyle} activeOpacity={1}>
       <View style={styles.card}>
         {Object.entries(content)
           .filter(([key, _]) => filters[key])
