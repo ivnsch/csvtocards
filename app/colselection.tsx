@@ -43,29 +43,36 @@ export default function ColSelectionScreen() {
       onPress={() => Keyboard.dismiss()}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "position" : "height"}
+        style={styles.keyboardWrapper}
       >
-        <ScrollView keyboardShouldPersistTaps="always">
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          contentContainerStyle={styles.scrollViewContent}
+          style={styles.scrollView}
+          //   contentContainerStyle={{ justifyContent: "flex-end", flex: 1 }}
+        >
           <View style={styles.containerInScrollView}>
-            <Text style={styles.header}>{"Default layout"}</Text>
-            {Object.keys(filters).map((header) => (
-              <CheckboxRow
-                key={header}
-                value={header}
-                isChecked={(value) => filters[value]}
-                toggleCheckbox={toggleFilterAndSave}
+            <View style={styles.scrollViewNestedContent}>
+              <Text style={styles.header}>{"Default layout"}</Text>
+              {Object.keys(filters).map((header) => (
+                <CheckboxRow
+                  key={header}
+                  value={header}
+                  isChecked={(value) => filters[value]}
+                  toggleCheckbox={toggleFilterAndSave}
+                />
+              ))}
+              <Separator />
+              <Text style={styles.header}>Template</Text>
+              <TextInput
+                onChangeText={saveTemplate}
+                value={template}
+                multiline
+                style={styles.textarea}
+                placeholder="$SomeColumn foo $AnotherColumn"
               />
-            ))}
-            <Separator />
-            <Text style={styles.header}>Template</Text>
-            <TextInput
-              onChangeText={saveTemplate}
-              value={template}
-              multiline
-              style={styles.textarea}
-              placeholder="$SomeColumn foo $AnotherColumn"
-            />
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -90,7 +97,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    marginTop: 100,
+    width: "100%",
   },
   header: {
     color: "white",
@@ -102,7 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     paddingBottom: 5,
     alignItems: "flex-start",
-    width: "100%",
+    width: 200,
   },
   startButton: {
     bottom: 50,
@@ -137,6 +144,23 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "black",
     color: "white",
+    width: "100%",
+  },
+  scrollView: {
+    width: "100%",
+  },
+  scrollViewContent: {
+    paddingTop: 100,
+    paddingBottom: 200,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollViewNestedContent: {
+    width: "100%",
+  },
+  keyboardWrapper: {
+    flex: 1,
     width: "100%",
   },
 });
