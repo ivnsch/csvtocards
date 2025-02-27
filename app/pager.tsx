@@ -74,10 +74,8 @@ export default function PagerScreen() {
                   filters={filters}
                   pageCount={data.rows.length}
                   isDone={isDone(index)}
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    toggleDoneAndSave();
-                  }}
+                  onPress={() => Keyboard.dismiss()}
+                  onLongPress={() => toggleDoneAndSave()}
                 />
               ))}
           </PagerView>
@@ -94,6 +92,7 @@ const Page = ({
   pageCount,
   isDone,
   onPress,
+  onLongPress,
 }: {
   content: CsvRow;
   index: number;
@@ -101,6 +100,7 @@ const Page = ({
   pageCount: number;
   isDone: boolean;
   onPress: () => void;
+  onLongPress: () => void;
 }) => {
   const pageStyle = {
     ...styles.page,
@@ -108,7 +108,12 @@ const Page = ({
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={pageStyle} activeOpacity={1}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={pageStyle}
+      activeOpacity={1}
+      onLongPress={onLongPress}
+    >
       <View style={styles.card}>
         {Object.entries(content)
           .filter(([key, _]) => filters[key])
