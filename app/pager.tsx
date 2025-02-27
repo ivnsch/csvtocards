@@ -14,6 +14,7 @@ import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 import { loadPage, saveDone, savePage } from "@/db/db";
+import ViewShot from "react-native-view-shot";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
@@ -25,6 +26,9 @@ export default function PagerScreen() {
   const setIndex = useStore((state) => state.setCardIndex);
 
   const isDone = (rowIndex: number) => done[rowIndex] ?? false;
+
+  const viewShotRef = useRef<ViewShot>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   // load index if saved
   useEffect(() => {
@@ -43,7 +47,15 @@ export default function PagerScreen() {
   };
 
   const captureScreenshot = async () => {
-    console.log("screenshot..");
+    if (viewShotRef.current) {
+      const uri = await viewShotRef.current.capture({
+        format: "png",
+        quality: 0.9,
+      });
+      console.log("image url: " + uri);
+
+      setImageUri(uri);
+    }
   };
 
   const toggleDoneAndSave = async () => {
@@ -83,6 +95,7 @@ export default function PagerScreen() {
                   isDone={isDone(index)}
                   onPress={() => Keyboard.dismiss()}
                   onLongPress={() => toggleDoneAndSave()}
+                  viewShotRef={viewShotRef}
                 />
               ))}
           </PagerView>
@@ -102,6 +115,7 @@ const Page = ({
   isDone,
   onPress,
   onLongPress,
+  viewShotRef,
 }: {
   content: CsvRow;
   index: number;
@@ -112,6 +126,7 @@ const Page = ({
   isDone: boolean;
   onPress: () => void;
   onLongPress: () => void;
+  viewShotRef: React.RefObject<ViewShot>;
 }) => {
   const cardStyle = {
     ...styles.card,
@@ -126,19 +141,21 @@ const Page = ({
       onLongPress={onLongPress}
     >
       <View style={styles.pageWrapper}>
-        <View style={cardStyle}>
-          <PageTopbar index={index} pageCount={pageCount} onShare={onShare} />
-          {Object.entries(content)
-            .filter(([key, _]) => filters[key])
-            .map((entry) => (
-              <PageEntry
-                index={index}
-                key={entry[0]}
-                entry={entry}
-                showKey={showHeaders}
-              />
-            ))}
-        </View>
+        <ViewShot ref={viewShotRef} options={{ format: "png", quality: 0.9 }}>
+          <View style={cardStyle}>
+            <PageTopbar index={index} pageCount={pageCount} onShare={onShare} />
+            {Object.entries(content)
+              .filter(([key, _]) => filters[key])
+              .map((entry) => (
+                <PageEntry
+                  index={index}
+                  key={entry[0]}
+                  entry={entry}
+                  showKey={showHeaders}
+                />
+              ))}
+          </View>
+        </ViewShot>
       </View>
     </TouchableOpacity>
   );
