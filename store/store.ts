@@ -2,17 +2,23 @@ import { create } from "zustand";
 
 export type CsvRow = { [key: string]: string };
 export type Filters = { [key: string]: boolean };
+export class CardSettings {
+  constructor(public showHeaders: boolean) {}
+}
 
 type Store = {
   data: MyCsv | null;
   filters: Filters;
+  cardSettings: CardSettings;
   cell: (rowIndex: number, column: string) => string;
   updateCell: (rowIndex: number, column: string, newValue: string) => void;
   done: boolean[];
   setDone: (done: boolean[]) => void;
   toggleDone: (rowIndex: number) => void;
   setData: (newData: MyCsv | null) => void;
+  setFilters: (newFilters: Filters) => void;
   toggleFilter: (header: string) => void;
+  toggleShowHeaders: () => void;
   cardIndex: number;
   setCardIndex: (index: number) => void;
 };
@@ -23,6 +29,7 @@ export const useStore = create<Store>((set) => ({
   filters: {},
   cardIndex: 0,
 
+  cardSettings: new CardSettings(true),
   cell: (rowIndex: number, column: string): string => {
     return useStore.getState().data?.rows[rowIndex]?.[column] ?? "";
   },
@@ -57,9 +64,20 @@ export const useStore = create<Store>((set) => ({
       }));
     }
   },
+  setFilters: (newFilters) => {
+    set({ filters: newFilters });
+  },
   toggleFilter: (header) =>
     set((state) => ({
       filters: { ...state.filters, [header]: !state.filters[header] },
+    })),
+
+  toggleShowHeaders: () =>
+    set((state) => ({
+      cardSettings: {
+        ...state.cardSettings,
+        showHeaders: !state.cardSettings.showHeaders,
+      },
     })),
 
   setCardIndex: (index: number) =>

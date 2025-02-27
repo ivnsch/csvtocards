@@ -1,4 +1,4 @@
-import { MyCsv } from "@/store/store";
+import { Filters, MyCsv } from "@/store/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const saveCSV = async (csv: MyCsv) => {
@@ -25,6 +25,33 @@ export const deleteCSV = async () => {
     await AsyncStorage.removeItem("csvData");
   } catch (e) {
     console.error("Error deleting CSV:", e);
+  }
+};
+
+export const saveFilters = async (data: Filters) => {
+  try {
+    const jsonValue = JSON.stringify(data);
+    await AsyncStorage.setItem("filters", jsonValue);
+  } catch (e) {
+    console.error("Error saving filters:", e);
+  }
+};
+
+export const loadFilters = async (): Promise<Filters | null> => {
+  try {
+    const jsonValue = await AsyncStorage.getItem("filters");
+    return jsonValue ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    console.error("Error loading filters:", e);
+    return null;
+  }
+};
+
+export const deleteFilters = async () => {
+  try {
+    await AsyncStorage.removeItem("filters");
+  } catch (e) {
+    console.error("Error deleting filters:", e);
   }
 };
 

@@ -7,22 +7,25 @@ import MyButton from "@/components/MyButton";
 import { useNavigation } from "expo-router";
 import { useEffect } from "react";
 import { mockCsvData } from "@/mock/mockdata";
-import { deleteCSV, deleteDone, saveCSV } from "@/db/db";
+import { deleteCSV, deleteDone, deleteFilters, saveCSV } from "@/db/db";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const router = useRouter();
 
   const setData = useStore((state) => state.setData);
+  const setFilters = useStore((state) => state.setFilters);
   const setDone = useStore((state) => state.setDone);
 
   const clearAllState = () => {
     // zustand
     setData(null);
+    setFilters({});
     setDone([]);
 
     // storage
     deleteCSV();
+    deleteFilters();
     deleteDone();
   };
 

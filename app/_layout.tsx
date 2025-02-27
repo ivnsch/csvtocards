@@ -4,7 +4,6 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -12,7 +11,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Appearance } from "react-native";
-import { loadCSV, loadDone } from "@/db/db";
+import { loadCSV, loadDone, loadFilters } from "@/db/db";
 import { useStore } from "@/store/store";
 import { Drawer } from "expo-router/drawer";
 
@@ -26,6 +25,7 @@ export default function RootLayout() {
   });
 
   const setData = useStore((state) => state.setData);
+  const setFilters = useStore((state) => state.setFilters);
   const setDone = useStore((state) => state.setDone);
 
   // load db data into zusand
@@ -34,6 +34,11 @@ export default function RootLayout() {
       const savedCsv = await loadCSV();
       if (savedCsv) {
         setData(savedCsv);
+      }
+
+      const savedFilters = await loadFilters();
+      if (savedFilters) {
+        setFilters(savedFilters);
       }
 
       const savedDone = await loadDone();
