@@ -11,17 +11,13 @@ import {
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
 import { useNavigation } from "expo-router";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useState } from "react";
 
 export default function PagerScreen() {
   const navigation = useNavigation();
 
   const data = useStore((state) => state.data);
   const filters = useStore((state) => state.filters);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({ title: "Caards" });
-  }, [navigation]);
 
   return (
     <View style={styles.container}>
