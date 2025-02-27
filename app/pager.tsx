@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
-  Pressable,
   Keyboard,
 } from "react-native";
 import PagerView from "react-native-pager-view";
