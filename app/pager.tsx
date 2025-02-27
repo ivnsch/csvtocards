@@ -108,22 +108,20 @@ const Page = ({
   };
 
   return (
-    <View style={pageStyle}>
+    <TouchableOpacity onPress={onLongPress} style={pageStyle} activeOpacity={1}>
       <View style={styles.card}>
-        <TouchableOpacity onLongPress={onLongPress}>
-          {Object.entries(content)
-            .filter(([key, _]) => filters[key])
-            .map((entry) => (
-              <PageEntry index={index} key={entry[0]} entry={entry} />
-            ))}
-        </TouchableOpacity>
+        {Object.entries(content)
+          .filter(([key, _]) => filters[key])
+          .map((entry) => (
+            <PageEntry index={index} key={entry[0]} entry={entry} />
+          ))}
       </View>
       <View style={styles.pageIndexContainer}>
         <Text style={styles.pageIndex}>
           {index + 1} / {pageCount}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
