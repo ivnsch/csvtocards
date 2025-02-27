@@ -17,6 +17,7 @@ import { loadPage, saveDone, savePage } from "@/db/db";
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
   const filters = useStore((state) => state.filters);
+  const showHeaders = useStore((state) => state.cardSettings.showHeaders);
   const toggleDone = useStore((state) => state.toggleDone);
   const done = useStore((state) => state.done);
   const index = useStore((state) => state.cardIndex);
@@ -72,6 +73,7 @@ export default function PagerScreen() {
                   index={index}
                   filters={filters}
                   pageCount={data.rows.length}
+                  showHeaders={showHeaders}
                   isDone={isDone(index)}
                   onPress={() => Keyboard.dismiss()}
                   onLongPress={() => toggleDoneAndSave()}
@@ -89,6 +91,7 @@ const Page = ({
   index,
   filters,
   pageCount,
+  showHeaders,
   isDone,
   onPress,
   onLongPress,
@@ -97,6 +100,7 @@ const Page = ({
   index: number;
   filters: Filters;
   pageCount: number;
+  showHeaders: boolean;
   isDone: boolean;
   onPress: () => void;
   onLongPress: () => void;
@@ -117,7 +121,12 @@ const Page = ({
         {Object.entries(content)
           .filter(([key, _]) => filters[key])
           .map((entry) => (
-            <PageEntry index={index} key={entry[0]} entry={entry} />
+            <PageEntry
+              index={index}
+              key={entry[0]}
+              entry={entry}
+              showKey={showHeaders}
+            />
           ))}
       </View>
       <View style={styles.pageIndexContainer}>
@@ -132,14 +141,16 @@ const Page = ({
 const PageEntry = ({
   index,
   entry,
+  showKey,
 }: {
   index: number;
   entry: [string, string];
+  showKey: boolean;
 }) => {
   const [key, value] = entry;
   return (
     <View style={{ flexDirection: "column", marginBottom: 5 }}>
-      <Text style={styles.header}>{key}</Text>
+      {showKey && <Text style={styles.header}>{key}</Text>}
       <Value index={index} column={key} />
     </View>
   );

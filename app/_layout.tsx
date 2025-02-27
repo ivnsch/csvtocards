@@ -67,6 +67,7 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Drawer>
         <Drawer.Screen name="index" options={{ title: "Files" }} />
+        <Drawer.Screen name="card_settings" options={{ title: "Settings" }} />
         <Drawer.Screen name="colselection" options={{ title: "Columns" }} />
         <Drawer.Screen name="pager" options={{ title: "Cards" }} />
       </Drawer>
