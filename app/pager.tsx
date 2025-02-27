@@ -31,6 +31,8 @@ export default function PagerScreen() {
   const viewShotRef = useRef<ViewShot>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
 
+  const pagerRef = useRef<PagerView | null>(null);
+
   // load index if saved
   useEffect(() => {
     const initPage = async () => {
@@ -68,6 +70,12 @@ export default function PagerScreen() {
     saveDone(latestDone);
   };
 
+  useEffect(() => {
+    if (pagerRef.current) {
+      pagerRef.current.setPage(index);
+    }
+  }, [index]);
+
   return (
     <View style={styles.container}>
       <RightBar />
@@ -83,6 +91,7 @@ export default function PagerScreen() {
             style={styles.pagerView}
             initialPage={index}
             onPageSelected={(e) => setIndexAndSave(e.nativeEvent.position)}
+            ref={pagerRef}
           >
             {data &&
               data.rows.map((content, index) => (
