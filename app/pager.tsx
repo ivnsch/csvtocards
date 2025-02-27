@@ -1,9 +1,12 @@
 import {
+  Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
@@ -22,18 +25,28 @@ export default function PagerScreen() {
 
   return (
     <View style={styles.container}>
-      <PagerView style={styles.pagerView} initialPage={0}>
-        {data &&
-          data.rows.map((content, index) => (
-            <Page
-              key={index}
-              content={content}
-              index={index}
-              filters={filters}
-              pageCount={data.rows.length}
-            />
-          ))}
-      </PagerView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <PagerView style={styles.pagerView} initialPage={0}>
+            {data &&
+              data.rows.map((content, index) => (
+                <Page
+                  key={index}
+                  content={content}
+                  index={index}
+                  filters={filters}
+                  pageCount={data.rows.length}
+                />
+              ))}
+          </PagerView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
