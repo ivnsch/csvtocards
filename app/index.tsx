@@ -7,6 +7,7 @@ import MyButton from "@/components/MyButton";
 import { useNavigation } from "expo-router";
 import { useEffect } from "react";
 import { mockCsvData } from "@/mock/mockdata";
+import { deleteCSV, saveCSV } from "@/db/db";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -14,16 +15,32 @@ export default function HomeScreen() {
 
   const setData = useStore((state) => state.setData);
 
+  const clearAllState = () => {
+    // zustand
+    setData(null);
+
+    // storage
+    deleteCSV();
+  };
+
   useEffect(() => {
     navigation.setOptions({ title: "File" });
   }, [navigation]);
+
+  const initCsv = (csv: MyCsv) => {
+    clearAllState();
+
+    setData(csv);
+    saveCSV(csv);
+
+    router.push("../colselection");
+  };
 
   const pickCSVFile = async () => {
     let csv = await getAndParseCsv();
     // let data = mockCsvData;
     if (csv) {
-      setData(csv);
-      router.push("../colselection");
+      initCsv(csv);
     } else {
       // TODO error handling
       console.log("Couldn't parse any csv data");
