@@ -11,7 +11,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Appearance } from "react-native";
-import { loadCSV, loadDone, loadFilters } from "@/db/db";
+import { loadCSV, loadDone, loadFilters, loadPage } from "@/db/db";
 import { useStore } from "@/store/store";
 import { Drawer } from "expo-router/drawer";
 
@@ -27,6 +27,7 @@ export default function RootLayout() {
   const setData = useStore((state) => state.setData);
   const setFilters = useStore((state) => state.setFilters);
   const setDone = useStore((state) => state.setDone);
+  const setCardIndex = useStore((state) => state.setCardIndex);
 
   // load db data into zusand
   useEffect(() => {
@@ -39,6 +40,11 @@ export default function RootLayout() {
       const savedFilters = await loadFilters();
       if (savedFilters) {
         setFilters(savedFilters);
+      }
+
+      const cardIndex = await loadPage();
+      if (cardIndex) {
+        setCardIndex(cardIndex);
       }
 
       const savedDone = await loadDone();
