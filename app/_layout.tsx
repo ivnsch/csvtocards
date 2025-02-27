@@ -12,6 +12,8 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Appearance } from "react-native";
+import { loadCSV } from "@/db/db";
+import { useStore } from "@/store/store";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -21,6 +23,18 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+  const setData = useStore((state) => state.setData);
+
+  // load db data into zusand
+  useEffect(() => {
+    const setFromCsv = async () => {
+      const savedCsv = await loadCSV();
+      if (savedCsv) {
+        setData(savedCsv);
+      }
+    };
+    setFromCsv();
+  }, [setData]);
 
   useEffect(() => {
     Appearance.setColorScheme("dark");
