@@ -134,11 +134,8 @@ const EditableValue = ({
           style={styles.editInput}
         />
       ) : (
-        <TouchableOpacity
-          onPress={() => setIsEditing(true)}
-          style={styles.value}
-        >
-          <Text>{value()}</Text>
+        <TouchableOpacity onPress={() => setIsEditing(true)}>
+          <Text style={styles.value}>{value()}</Text>
         </TouchableOpacity>
       )}
     </View>
