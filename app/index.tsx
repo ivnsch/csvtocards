@@ -23,10 +23,6 @@ export default function HomeScreen() {
     deleteCSV();
   };
 
-  useEffect(() => {
-    navigation.setOptions({ title: "File" });
-  }, [navigation]);
-
   const initCsv = (csv: MyCsv) => {
     clearAllState();
 

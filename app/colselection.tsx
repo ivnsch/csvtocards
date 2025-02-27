@@ -17,10 +17,6 @@ export default function ColSelectionScreen() {
   const filters = useStore((state) => state.filters);
   const toggleFilter = useStore((state) => state.toggleFilter);
 
-  useEffect(() => {
-    navigation.setOptions({ title: "Column selection" });
-  }, [navigation]);
-
   return (
     <View style={styles.container}>
       <ScrollView>

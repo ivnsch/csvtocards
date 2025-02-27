@@ -14,6 +14,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { Appearance } from "react-native";
 import { loadCSV } from "@/db/db";
 import { useStore } from "@/store/store";
+import { Drawer } from "expo-router/drawer";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -52,10 +53,11 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <Drawer>
+        <Drawer.Screen name="index" options={{ title: "Files" }} />
+        <Drawer.Screen name="colselection" options={{ title: "Columns" }} />
+        <Drawer.Screen name="pager" options={{ title: "Cards" }} />
+      </Drawer>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
