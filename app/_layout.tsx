@@ -11,7 +11,13 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Appearance } from "react-native";
-import { loadCSV, loadDone, loadFilters, loadPage } from "@/db/db";
+import {
+  loadCSV,
+  loadDone,
+  loadFilters,
+  loadPage,
+  loadTemplate,
+} from "@/db/db";
 import { useStore } from "@/store/store";
 import { Drawer } from "expo-router/drawer";
 
@@ -28,6 +34,7 @@ export default function RootLayout() {
   const setFilters = useStore((state) => state.setFilters);
   const setDone = useStore((state) => state.setDone);
   const setCardIndex = useStore((state) => state.setCardIndex);
+  const setTemplate = useStore((state) => state.setTemplate);
 
   // load db data into zusand
   useEffect(() => {
@@ -50,6 +57,11 @@ export default function RootLayout() {
       const savedDone = await loadDone();
       if (savedDone) {
         setDone(savedDone);
+      }
+
+      const template = await loadTemplate();
+      if (template) {
+        setTemplate(template);
       }
     };
     setFromCsv();

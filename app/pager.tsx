@@ -25,6 +25,7 @@ export default function PagerScreen() {
   const done = useStore((state) => state.done);
   const index = useStore((state) => state.cardIndex);
   const setIndex = useStore((state) => state.setCardIndex);
+  const template = useStore((state) => state.template);
 
   const isDone = (rowIndex: number) => done[rowIndex] ?? false;
 
@@ -35,6 +36,7 @@ export default function PagerScreen() {
 
   // load index if saved
   useEffect(() => {
+    ``;
     const initPage = async () => {
       const savedPage = await loadPage();
       if (savedPage != null) {
@@ -107,6 +109,7 @@ export default function PagerScreen() {
                   onPress={() => Keyboard.dismiss()}
                   onLongPress={() => toggleDoneAndSave()}
                   viewShotRef={viewShotRef}
+                  template={template}
                 />
               ))}
           </PagerView>
@@ -127,6 +130,7 @@ const Page = ({
   onPress,
   onLongPress,
   viewShotRef,
+  template,
 }: {
   content: CsvRow;
   index: number;
@@ -138,7 +142,10 @@ const Page = ({
   onPress: () => void;
   onLongPress: () => void;
   viewShotRef: React.RefObject<ViewShot>;
+  template: string;
 }) => {
+  const customRows = parseTemplate(template, content);
+
   const cardStyle = {
     ...styles.card,
     ...(isDone ? styles.cardGreenLeftBorder : styles.cardWhiteLeftBorder),
@@ -155,20 +162,57 @@ const Page = ({
         <ViewShot ref={viewShotRef} options={{ format: "png", quality: 0.9 }}>
           <View style={cardStyle}>
             <PageTopbar index={index} pageCount={pageCount} onShare={onShare} />
-            {Object.entries(content)
-              .filter(([key, _]) => filters[key])
-              .map((entry) => (
-                <PageEntry
-                  index={index}
-                  key={entry[0]}
-                  entry={entry}
-                  showKey={showHeaders}
-                />
-              ))}
+
+            {customRows ? (
+              <TemplatePageEntry rows={customRows} />
+            ) : (
+              Object.entries(content)
+                .filter(([key, _]) => filters[key])
+                .map((entry) => (
+                  <PageEntry
+                    index={index}
+                    key={entry[0]}
+                    entry={entry}
+                    showKey={showHeaders}
+                  />
+                ))
+            )}
           </View>
         </ViewShot>
       </View>
     </TouchableOpacity>
+  );
+};
+
+const parseTemplate = (layout: string, rowData: CsvRow): string[][] | null => {
+  if (!layout) return null;
+
+  return layout.split("\n").map((line) =>
+    line.split(/\s+/).map((token) => {
+      const match = token.match(/^\$(\w+)([.,!?:;]*)$/);
+      if (match) {
+        const columnName = match[1];
+        const symbol = match[2];
+        return (rowData[columnName] ?? `[${columnName} not found]`) + symbol;
+      }
+      return token;
+    })
+  );
+};
+
+const TemplatePageEntry = ({ rows }: { rows: string[][] }) => {
+  return (
+    <View>
+      {rows.map((row, rowIndex) => (
+        <View key={rowIndex} style={styles.customRow}>
+          {row.map((cell, colIndex) => (
+            <View key={colIndex}>
+              <Text style={styles.value}>{cell}</Text>
+            </View>
+          ))}
+        </View>
+      ))}
+    </View>
   );
 };
 
@@ -350,6 +394,12 @@ const styles = StyleSheet.create({
   value: {
     color: "#EAEAEA",
     fontSize: 24,
+    marginBottom: 10,
+  },
+  valueText: {},
+  customRow: {
+    flexDirection: "row",
+    gap: 10,
     marginBottom: 10,
   },
   text: {

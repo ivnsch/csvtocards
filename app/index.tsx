@@ -12,6 +12,7 @@ import {
   deleteDone,
   deleteFilters,
   deletePage,
+  deleteTemplate,
   saveCSV,
 } from "@/db/db";
 
@@ -23,6 +24,7 @@ export default function HomeScreen() {
   const setFilters = useStore((state) => state.setFilters);
   const setDone = useStore((state) => state.setDone);
   const setCardIndex = useStore((state) => state.setCardIndex);
+  const setTemplate = useStore((state) => state.setTemplate);
 
   const clearAllState = () => {
     // zustand
@@ -30,12 +32,14 @@ export default function HomeScreen() {
     setFilters({});
     setCardIndex(0);
     setDone([]);
+    setTemplate("");
 
     // storage
     deleteCSV();
     deleteFilters();
     deletePage();
     deleteDone();
+    deleteTemplate();
   };
 
   const initCsv = (csv: MyCsv) => {

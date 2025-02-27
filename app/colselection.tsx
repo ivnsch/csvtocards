@@ -1,4 +1,14 @@
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+  Keyboard,
+} from "react-native";
 import { useStore } from "@/store/store";
 import { useRouter } from "expo-router";
 import MyButton from "@/components/MyButton";
@@ -9,6 +19,9 @@ export default function ColSelectionScreen() {
   const router = useRouter();
 
   const filters = useStore((state) => state.filters);
+  const setTemplate = useStore((state) => state.setTemplate);
+  const template = useStore((state) => state.template);
+
   const toggleFilter = useStore((state) => state.toggleFilter);
 
   const toggleFilterAndSave = (header: string) => {
@@ -18,28 +31,60 @@ export default function ColSelectionScreen() {
     saveFilters(updatedFilters);
   };
 
-  return (
-    <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.containerInScrollView}>
-          <Text style={styles.header}>{"Select columns to show"}</Text>
-          {Object.keys(filters).map((header) => (
-            <CheckboxRow
-              key={header}
-              value={header}
-              isChecked={(value) => filters[value]}
-              toggleCheckbox={toggleFilterAndSave}
-            />
-          ))}
-        </View>
-      </ScrollView>
+  const saveTemplate = async (layout: string) => {
+    setTemplate(layout);
+    await saveTemplate(layout);
+  };
 
+  return (
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={1}
+      onPress={() => Keyboard.dismiss()}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView keyboardShouldPersistTaps="always">
+          <View style={styles.containerInScrollView}>
+            <Text style={styles.header}>{"Default layout"}</Text>
+            {Object.keys(filters).map((header) => (
+              <CheckboxRow
+                key={header}
+                value={header}
+                isChecked={(value) => filters[value]}
+                toggleCheckbox={toggleFilterAndSave}
+              />
+            ))}
+            <Separator />
+            <Text style={styles.header}>Template</Text>
+            <TextInput
+              onChangeText={saveTemplate}
+              value={template}
+              multiline
+              style={styles.textarea}
+              placeholder="$SomeColumn foo $AnotherColumn"
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <View style={styles.startButton}>
         <MyButton title="Start" onPress={() => router.push("../pager")} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
+
+const Separator = () => {
+  return (
+    <View style={styles.separatorContainer}>
+      <View style={styles.leftLine} />
+      <Text style={styles.text}>OR</Text>
+      <View style={styles.rightLine} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -49,7 +94,7 @@ const styles = StyleSheet.create({
   },
   header: {
     color: "white",
-    marginBottom: 50,
+    marginBottom: 20,
     fontSize: 20,
   },
   containerInScrollView: {
@@ -61,5 +106,37 @@ const styles = StyleSheet.create({
   },
   startButton: {
     bottom: 50,
+  },
+  separatorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 10, // Adjust as needed
+  },
+  leftLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "gray",
+    marginRight: 10,
+  },
+  rightLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "gray",
+    marginLeft: 10,
+  },
+  text: {
+    fontSize: 16,
+    color: "white",
+  },
+  textarea: {
+    height: 100,
+    borderColor: "gray",
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: "black",
+    color: "white",
+    width: "100%",
   },
 });

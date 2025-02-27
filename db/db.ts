@@ -108,3 +108,30 @@ export const deleteDone = async () => {
     console.error("Error deleting done:", e);
   }
 };
+
+export const saveTemplate = async (template: string) => {
+  try {
+    const jsonValue = JSON.stringify(template);
+    await AsyncStorage.setItem("template", jsonValue);
+  } catch (e) {
+    console.error("Error saving template:", e);
+  }
+};
+
+export const loadTemplate = async (): Promise<string | null> => {
+  try {
+    const jsonValue = await AsyncStorage.getItem("template");
+    return jsonValue ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    console.error("Error loading template:", e);
+    return null;
+  }
+};
+
+export const deleteTemplate = async () => {
+  try {
+    await AsyncStorage.removeItem("template");
+  } catch (e) {
+    console.error("Error deleting template:", e);
+  }
+};
