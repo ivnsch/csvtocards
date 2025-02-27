@@ -46,8 +46,6 @@ export const useStore = create<Store>((set) => ({
     set((state) => {
       const updatedDone = [...state.done];
       updatedDone[rowIndex] = !updatedDone[rowIndex];
-      console.log("toggled done: " + updatedDone + " for index: " + rowIndex);
-
       return { done: updatedDone };
     }),
 

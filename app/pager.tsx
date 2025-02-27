@@ -42,8 +42,6 @@ export default function PagerScreen() {
   };
 
   const toggleDoneAndSave = async () => {
-    console.log("toggleDoneAndSave");
-
     const savedPage = await loadPage();
     if (savedPage != null) {
       toggleDone(savedPage);
@@ -51,8 +49,6 @@ export default function PagerScreen() {
     const latestDone = useStore.getState().done;
     saveDone(latestDone);
   };
-
-  console.log("index: " + index);
 
   return (
     <View style={styles.container}>
