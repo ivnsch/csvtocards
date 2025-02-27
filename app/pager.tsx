@@ -15,6 +15,7 @@ import { CsvRow, Filters, useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 import { loadPage, saveDone, savePage } from "@/db/db";
 import ViewShot from "react-native-view-shot";
+import { RightBar } from "@/components/rightbar";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
@@ -69,6 +70,7 @@ export default function PagerScreen() {
 
   return (
     <View style={styles.container}>
+      <RightBar />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
