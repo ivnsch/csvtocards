@@ -250,7 +250,7 @@ const PageTopbar = ({
   return (
     <View style={styles.pageTopBar}>
       <CurrentPageIndicator index={index} pageCount={pageCount} />
-      <CameraButton onShare={onShare} />
+      {/* <CameraButton onShare={onShare} /> */}
     </View>
   );
 };
