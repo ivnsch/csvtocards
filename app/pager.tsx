@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { loadPage, saveDone, savePage } from "@/db/db";
 
 export default function PagerScreen() {
@@ -160,6 +160,8 @@ const EditableValue = ({
   const cell = useStore((state) => state.cell);
   const updateCell = useStore((state) => state.updateCell);
 
+  const textInputRef = useRef<TextInput>(null);
+
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (newValue: string) => {
@@ -170,10 +172,21 @@ const EditableValue = ({
     return cell(index, column);
   };
 
+  const handleTextOnPress = () => {
+    setIsEditing(true);
+    // need a short delay to let it render the textinput..
+    setTimeout(() => {
+      if (textInputRef.current) {
+        textInputRef.current.focus();
+      }
+    }, 100);
+  };
+
   return (
     <View>
       {isEditing ? (
         <TextInput
+          ref={textInputRef}
           editable
           multiline
           numberOfLines={4}
@@ -184,7 +197,7 @@ const EditableValue = ({
           style={styles.editInput}
         />
       ) : (
-        <TouchableOpacity onPress={() => setIsEditing(true)}>
+        <TouchableOpacity onPress={handleTextOnPress}>
           <Text style={styles.value}>{value()}</Text>
         </TouchableOpacity>
       )}
