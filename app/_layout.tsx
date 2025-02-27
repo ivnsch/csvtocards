@@ -12,7 +12,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Appearance } from "react-native";
-import { loadCSV } from "@/db/db";
+import { loadCSV, loadDone } from "@/db/db";
 import { useStore } from "@/store/store";
 import { Drawer } from "expo-router/drawer";
 
@@ -24,7 +24,9 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
   const setData = useStore((state) => state.setData);
+  const setDone = useStore((state) => state.setDone);
 
   // load db data into zusand
   useEffect(() => {
@@ -32,6 +34,11 @@ export default function RootLayout() {
       const savedCsv = await loadCSV();
       if (savedCsv) {
         setData(savedCsv);
+      }
+
+      const savedDone = await loadDone();
+      if (savedDone) {
+        setDone(savedDone);
       }
     };
     setFromCsv();

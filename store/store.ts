@@ -8,13 +8,21 @@ type Store = {
   filters: Filters;
   cell: (rowIndex: number, column: string) => string;
   updateCell: (rowIndex: number, column: string, newValue: string) => void;
+  done: boolean[];
+  setDone: (done: boolean[]) => void;
+  toggleDone: (rowIndex: number) => void;
   setData: (newData: MyCsv | null) => void;
   toggleFilter: (header: string) => void;
+  cardIndex: number;
+  setCardIndex: (index: number) => void;
 };
 
 export const useStore = create<Store>((set) => ({
   data: null,
+  done: [],
   filters: {},
+  cardIndex: 0,
+
   cell: (rowIndex: number, column: string): string => {
     return useStore.getState().data?.rows[rowIndex]?.[column] ?? "";
   },
@@ -31,6 +39,18 @@ export const useStore = create<Store>((set) => ({
       };
     }),
 
+  setDone: (newDone) => {
+    set({ done: newDone });
+  },
+  toggleDone: (rowIndex) =>
+    set((state) => {
+      const updatedDone = [...state.done];
+      updatedDone[rowIndex] = !updatedDone[rowIndex];
+      console.log("toggled done: " + updatedDone + " for index: " + rowIndex);
+
+      return { done: updatedDone };
+    }),
+
   setData: (newData) => {
     set({ data: newData });
     if (newData) {
@@ -42,6 +62,11 @@ export const useStore = create<Store>((set) => ({
   toggleFilter: (header) =>
     set((state) => ({
       filters: { ...state.filters, [header]: !state.filters[header] },
+    })),
+
+  setCardIndex: (index: number) =>
+    set(() => ({
+      cardIndex: index,
     })),
 }));
 

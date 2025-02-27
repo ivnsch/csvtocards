@@ -7,14 +7,51 @@ import {
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
+  Pressable,
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { loadPage, saveDone, savePage } from "@/db/db";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
   const filters = useStore((state) => state.filters);
+  const toggleDone = useStore((state) => state.toggleDone);
+  const done = useStore((state) => state.done);
+  const index = useStore((state) => state.cardIndex);
+  const setIndex = useStore((state) => state.setCardIndex);
+
+  const isDone = (rowIndex: number) => done[rowIndex] ?? false;
+
+  // load index if saved
+  useEffect(() => {
+    const initPage = async () => {
+      const savedPage = await loadPage();
+      if (savedPage != null) {
+        setIndex(savedPage);
+      }
+    };
+    initPage();
+  }, [setIndex]);
+
+  const setIndexAndSave = (index: number) => {
+    setIndex(index);
+    savePage(index);
+  };
+
+  const toggleDoneAndSave = async () => {
+    console.log("toggleDoneAndSave");
+
+    const savedPage = await loadPage();
+    if (savedPage != null) {
+      toggleDone(savedPage);
+    }
+    const latestDone = useStore.getState().done;
+    saveDone(latestDone);
+  };
+
+  console.log("index: " + index);
 
   return (
     <View style={styles.container}>
@@ -26,7 +63,11 @@ export default function PagerScreen() {
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
         >
-          <PagerView style={styles.pagerView} initialPage={0}>
+          <PagerView
+            style={styles.pagerView}
+            initialPage={index}
+            onPageSelected={(e) => setIndexAndSave(e.nativeEvent.position)}
+          >
             {data &&
               data.rows.map((content, index) => (
                 <Page
@@ -35,6 +76,8 @@ export default function PagerScreen() {
                   index={index}
                   filters={filters}
                   pageCount={data.rows.length}
+                  isDone={isDone(index)}
+                  onLongPress={toggleDoneAndSave}
                 />
               ))}
           </PagerView>
@@ -49,20 +92,31 @@ const Page = ({
   index,
   filters,
   pageCount,
+  isDone,
+  onLongPress,
 }: {
   content: CsvRow;
   index: number;
   filters: Filters;
   pageCount: number;
+  isDone: boolean;
+  onLongPress: () => void;
 }) => {
+  const pageStyle = {
+    ...styles.page,
+    ...(isDone ? styles.cardGreenLeftBorder : styles.cardWhiteLeftBorder),
+  };
+
   return (
-    <View style={styles.page}>
+    <View style={pageStyle}>
       <View style={styles.card}>
-        {Object.entries(content)
-          .filter(([key, _]) => filters[key])
-          .map((entry) => (
-            <PageEntry index={index} key={entry[0]} entry={entry} />
-          ))}
+        <TouchableOpacity onLongPress={onLongPress}>
+          {Object.entries(content)
+            .filter(([key, _]) => filters[key])
+            .map((entry) => (
+              <PageEntry index={index} key={entry[0]} entry={entry} />
+            ))}
+        </TouchableOpacity>
       </View>
       <View style={styles.pageIndexContainer}>
         <Text style={styles.pageIndex}>
@@ -150,17 +204,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#121212",
+    borderLeftWidth: 0.5,
   },
   card: {
     width: "90%",
     padding: 20,
-    backgroundColor: "#1E1E1E",
-
-    borderRadius: 12,
+    backgroundColor: "transparent", // Ensure no overriding color
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 5, // Android shadow
+  },
+  cardWhiteLeftBorder: {
+    borderLeftColor: "white",
+  },
+  cardGreenLeftBorder: {
+    borderLeftColor: "#39FF14",
   },
   header: { color: "#999999" },
   cell: { flex: 1, padding: 8, textAlign: "center", color: "white" },
