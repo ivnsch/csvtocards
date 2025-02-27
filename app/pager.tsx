@@ -8,6 +8,7 @@ import {
   View,
   KeyboardAvoidingView,
   Keyboard,
+  Image,
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
@@ -39,6 +40,10 @@ export default function PagerScreen() {
   const setIndexAndSave = (index: number) => {
     setIndex(index);
     savePage(index);
+  };
+
+  const captureScreenshot = async () => {
+    console.log("screenshot..");
   };
 
   const toggleDoneAndSave = async () => {
@@ -74,6 +79,7 @@ export default function PagerScreen() {
                   filters={filters}
                   pageCount={data.rows.length}
                   showHeaders={showHeaders}
+                  onShare={captureScreenshot}
                   isDone={isDone(index)}
                   onPress={() => Keyboard.dismiss()}
                   onLongPress={() => toggleDoneAndSave()}
@@ -92,6 +98,7 @@ const Page = ({
   filters,
   pageCount,
   showHeaders,
+  onShare,
   isDone,
   onPress,
   onLongPress,
@@ -101,38 +108,37 @@ const Page = ({
   filters: Filters;
   pageCount: number;
   showHeaders: boolean;
+  onShare: () => void;
   isDone: boolean;
   onPress: () => void;
   onLongPress: () => void;
 }) => {
-  const pageStyle = {
-    ...styles.page,
+  const cardStyle = {
+    ...styles.card,
     ...(isDone ? styles.cardGreenLeftBorder : styles.cardWhiteLeftBorder),
   };
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={pageStyle}
+      style={styles.page}
       activeOpacity={1}
       onLongPress={onLongPress}
     >
-      <View style={styles.card}>
-        {Object.entries(content)
-          .filter(([key, _]) => filters[key])
-          .map((entry) => (
-            <PageEntry
-              index={index}
-              key={entry[0]}
-              entry={entry}
-              showKey={showHeaders}
-            />
-          ))}
-      </View>
-      <View style={styles.pageIndexContainer}>
-        <Text style={styles.pageIndex}>
-          {index + 1} / {pageCount}
-        </Text>
+      <View style={styles.pageWrapper}>
+        <View style={cardStyle}>
+          <PageTopbar index={index} pageCount={pageCount} onShare={onShare} />
+          {Object.entries(content)
+            .filter(([key, _]) => filters[key])
+            .map((entry) => (
+              <PageEntry
+                index={index}
+                key={entry[0]}
+                entry={entry}
+                showKey={showHeaders}
+              />
+            ))}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -215,6 +221,51 @@ const EditableValue = ({
   );
 };
 
+const PageTopbar = ({
+  index,
+  pageCount,
+  onShare,
+}: {
+  index: number;
+  pageCount: number;
+  onShare: () => void;
+}) => {
+  return (
+    <View style={styles.pageTopBar}>
+      <CurrentPageIndicator index={index} pageCount={pageCount} />
+      <CameraButton onShare={onShare} />
+    </View>
+  );
+};
+
+const CurrentPageIndicator = ({
+  index,
+  pageCount,
+}: {
+  index: number;
+  pageCount: number;
+}) => {
+  return (
+    <View style={styles.pageIndexContainer}>
+      <Text style={styles.pageIndex}>
+        {index + 1} / {pageCount}
+      </Text>
+    </View>
+  );
+};
+
+const CameraButton = ({ onShare }: { onShare: () => void }) => {
+  return (
+    <TouchableOpacity onPress={() => onShare()} style={styles.cameraButton}>
+      <Image
+        style={styles.shareIcon}
+        source={require("../assets/images/camera_button_grey.png")}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  );
+};
+
 const editInputBase = {
   borderBottomWidth: 1,
   borderBottomColor: "white",
@@ -227,19 +278,31 @@ const editInputBase = {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#121212",
     borderLeftWidth: 0.5,
   },
+  pageWrapper: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    width: "100%",
+    alignItems: "center",
+  },
   card: {
-    width: "90%",
-    padding: 20,
-    backgroundColor: "transparent", // Ensure no overriding color
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5, // Android shadow
+    flexDirection: "column",
+    width: "80%",
+    borderLeftWidth: 0.5,
+    display: "flex",
+    alignItems: "stretch",
+    paddingLeft: 20,
+  },
+  shareIcon: {
+    width: 25,
+    height: 25,
+    marginLeft: "auto",
+    cursor: "pointer",
   },
   cardWhiteLeftBorder: {
     borderLeftColor: "white",
@@ -274,19 +337,20 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   pageIndex: {
-    bottom: 20,
-    right: 30,
-    textAlign: "right",
-    position: "absolute",
-
     color: "#999999",
     fontSize: 16,
   },
-  pageIndexContainer: {
-    marginTop: 10,
-    alignSelf: "flex-end",
+  pageTopBar: {
+    width: "100%",
+    height: 50,
+    flexDirection: "row",
+    alignItems: "center",
   },
+  pageIndexContainer: {},
   editInput: {
     ...editInputBase,
+  },
+  cameraButton: {
+    marginLeft: "auto",
   },
 });
