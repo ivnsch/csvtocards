@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as Papa from "papaparse";
-import { CsvRow, useStore } from "@/store/store";
+import { CsvRow, MyCsv, useStore } from "@/store/store";
 import { useRouter } from "expo-router";
 import MyButton from "@/components/MyButton";
 import { useNavigation } from "expo-router";
@@ -19,10 +19,10 @@ export default function HomeScreen() {
   }, [navigation]);
 
   const pickCSVFile = async () => {
-    let data = await getAndParseCsv();
+    let csv = await getAndParseCsv();
     // let data = mockCsvData;
-    if (data) {
-      setData(data);
+    if (csv) {
+      setData(csv);
       router.push("../colselection");
     } else {
       // TODO error handling
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const getAndParseCsv = async (): Promise<CsvRow[] | undefined> => {
+const getAndParseCsv = async (): Promise<MyCsv | undefined> => {
   try {
     const csvString = await getCsvAsString();
     if (csvString) {
@@ -60,20 +60,34 @@ const getAndParseCsv = async (): Promise<CsvRow[] | undefined> => {
   }
 };
 
-const getCsvAsString = async (): Promise<string | null> => {
+type ParsedCsvString = {
+  fileName: string;
+  csv: string;
+};
+
+const getCsvAsString = async (): Promise<ParsedCsvString | null> => {
   const result = await DocumentPicker.getDocumentAsync({
     type: "text/csv",
   });
 
   if (result.canceled) return null;
 
-  const fileUri = result.assets[0].uri;
+  const asset = result.assets[0];
+  const fileUri = asset.uri;
+  const fileName = asset.name;
   const response = await fetch(fileUri);
-  return await response.text();
+  const text = await response.text();
+  return {
+    fileName: fileName,
+    csv: text,
+  };
 };
 
-const parseCsv = (csvString: string): CsvRow[] => {
-  const parsed = Papa.parse<CsvRow>(csvString, { header: true });
+const parseCsv = (str: ParsedCsvString): MyCsv => {
+  const parsed = Papa.parse<CsvRow>(str.csv, { header: true });
   console.log("parsed: " + JSON.stringify(parsed));
-  return parsed.data;
+  const csvEntries = parsed.data;
+  const headers = parsed.meta.fields || [];
+
+  return new MyCsv(str.fileName, headers, parsed.data);
 };

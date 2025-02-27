@@ -4,19 +4,37 @@ export type CsvRow = { [key: string]: string };
 export type Filters = { [key: string]: boolean };
 
 type Store = {
-  data: CsvRow[];
+  data: MyCsv | null;
   filters: Filters;
-  setData: (newData: CsvRow[]) => void;
+  cell: (rowIndex: number, column: string) => string;
+  updateCell: (rowIndex: number, column: string, newValue: string) => void;
+  setData: (newData: MyCsv | null) => void;
   toggleFilter: (header: string) => void;
 };
 
 export const useStore = create<Store>((set) => ({
-  data: [],
+  data: null,
   filters: {},
+  cell: (rowIndex: number, column: string): string => {
+    return useStore.getState().data?.rows[rowIndex]?.[column] ?? "";
+  },
+  updateCell: (rowIndex, column, newValue) =>
+    set((state) => {
+      if (!state.data) return state;
+
+      const updatedRows = state.data.rows.map((row, i) =>
+        i === rowIndex ? { ...row, [column]: newValue } : row
+      );
+
+      return {
+        data: new MyCsv(state.data.name, state.data.headers, updatedRows),
+      };
+    }),
+
   setData: (newData) => {
     set({ data: newData });
-    if (newData.length > 0) {
-      set((state) => ({
+    if (newData) {
+      set(() => ({
         filters: toFilters(newData),
       }));
     }
@@ -27,7 +45,14 @@ export const useStore = create<Store>((set) => ({
     })),
 }));
 
-const toFilters = (data: CsvRow[]): Filters => {
-  const headers = Object.keys(data[0]);
-  return Object.fromEntries(headers.map((header) => [header, true]));
+const toFilters = (data: MyCsv): Filters => {
+  return Object.fromEntries(data.headers.map((header) => [header, true]));
 };
+
+export class MyCsv {
+  constructor(
+    public name: string,
+    public headers: string[],
+    public rows: CsvRow[]
+  ) {}
+}

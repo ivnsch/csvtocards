@@ -1,8 +1,14 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
 import { useNavigation } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function PagerScreen() {
   const navigation = useNavigation();
@@ -17,15 +23,16 @@ export default function PagerScreen() {
   return (
     <View style={styles.container}>
       <PagerView style={styles.pagerView} initialPage={0}>
-        {data.map((content, index) => (
-          <Page
-            key={index}
-            content={content}
-            index={index}
-            filters={filters}
-            pageCount={data.length}
-          />
-        ))}
+        {data &&
+          data.rows.map((content, index) => (
+            <Page
+              key={index}
+              content={content}
+              index={index}
+              filters={filters}
+              pageCount={data.rows.length}
+            />
+          ))}
       </PagerView>
     </View>
   );
@@ -48,7 +55,7 @@ const Page = ({
         {Object.entries(content)
           .filter(([key, _]) => filters[key])
           .map((entry) => (
-            <PageEntry key={entry[0]} entry={entry} />
+            <PageEntry index={index} key={entry[0]} entry={entry} />
           ))}
       </View>
       <View style={styles.pageIndexContainer}>
@@ -60,14 +67,78 @@ const Page = ({
   );
 };
 
-const PageEntry = ({ entry }: { entry: [string, string] }) => {
+const PageEntry = ({
+  index,
+  entry,
+}: {
+  index: number;
+  entry: [string, string];
+}) => {
   const [key, value] = entry;
   return (
     <View style={{ flexDirection: "column", marginBottom: 5 }}>
       <Text style={styles.header}>{key}</Text>
-      <Text style={styles.value}>{value}</Text>
+      <Value index={index} column={key} />
     </View>
   );
+};
+
+const Value = ({ index, column }: { index: number; column: string }) => {
+  return <EditableValue index={index} column={column} />;
+};
+
+const EditableValue = ({
+  index,
+  column,
+}: {
+  index: number;
+  column: string;
+}) => {
+  const cell = useStore((state) => state.cell);
+  const updateCell = useStore((state) => state.updateCell);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleChange = (newValue: string) => {
+    updateCell(index, column, newValue);
+  };
+
+  const value = (): string => {
+    return cell(index, column);
+  };
+
+  return (
+    <View>
+      {isEditing ? (
+        <TextInput
+          editable
+          multiline
+          numberOfLines={4}
+          maxLength={40}
+          onChangeText={(text) => handleChange(text)}
+          onBlur={() => setIsEditing(false)}
+          value={value()}
+          style={styles.editInput}
+        />
+      ) : (
+        <TouchableOpacity
+          onPress={() => setIsEditing(true)}
+          style={styles.value}
+        >
+          <Text>{value()}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
+
+const editInputBase = {
+  borderBottomWidth: 1,
+  borderBottomColor: "white",
+  backgroundColor: "transparent",
+  color: "white",
+  paddingVertical: 5,
+  fontSize: 16,
 };
 
 const styles = StyleSheet.create({
@@ -126,5 +197,8 @@ const styles = StyleSheet.create({
   pageIndexContainer: {
     marginTop: 10,
     alignSelf: "flex-end",
+  },
+  editInput: {
+    ...editInputBase,
   },
 });
