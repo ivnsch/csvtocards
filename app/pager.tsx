@@ -20,6 +20,7 @@ import ViewShot from "react-native-view-shot";
 import { RightBar } from "@/components/rightbar";
 import { useNavigation } from "expo-router";
 import RNFS from "react-native-fs";
+import Share from "react-native-share";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
@@ -82,9 +83,9 @@ export default function PagerScreen() {
     });
   }, [navigation]);
 
-  const downloadCsv = () => {
+  const downloadCsv = async () => {
     if (data) {
-      downloadAsCSV(data);
+      await downloadAsCSV(data);
     }
   };
 
@@ -191,12 +192,19 @@ export default function PagerScreen() {
   );
 }
 
-const downloadAsCSV = (data: MyCsv) => {
+const downloadAsCSV = async (data: MyCsv) => {
   const csvString = toString(data.rows);
-  triggerDownload(data.name, csvString);
+  
+  const path = await triggerDownload(data.name, csvString);
+  if (path) {
+    shareFile(path);
+  }
 };
 
-const triggerDownload = async (fileName: string, csvContent: string) => {
+const triggerDownload = async (
+  fileName: string,
+  csvContent: string
+): Promise<string | null> => {
   const filePath =
     Platform.OS === "ios"
       ? RNFS.DocumentDirectoryPath + "/" + fileName
@@ -206,9 +214,22 @@ const triggerDownload = async (fileName: string, csvContent: string) => {
     await RNFS.writeFile(filePath, csvContent, "utf8");
 
     console.log("CSV file saved at: ", filePath);
+
+    return filePath;
   } catch (error) {
     console.error("Error saving CSV file: ", error);
+    return null;
   }
+};
+
+const shareFile = async (path: string) => {
+  const options = {
+    title: "Share CSV File",
+    url: "file://" + path,
+    type: "text/csv",
+  };
+  const res = await Share.open(options);
+  console.log("share res: " + res);
 };
 
 const toString = (rows: CsvRow[]): string => {
