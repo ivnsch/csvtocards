@@ -88,7 +88,6 @@ export default function RootLayout() {
         <Drawer.Screen name="card_settings" options={{ title: "Settings" }} />
         <Drawer.Screen name="colselection" options={{ title: "Columns" }} />
         <Drawer.Screen name="pager" options={{ title: "Cards" }} />
-        <Drawer.Screen name="shortcuts" options={{ title: "Shortcuts" }} />
         <Drawer.Screen name="terms" options={{ title: "Terms" }} />
         <Drawer.Screen name="privacy" options={{ title: "Privacy" }} />
       </Drawer>
