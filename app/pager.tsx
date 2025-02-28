@@ -13,12 +13,13 @@ import {
   Animated,
 } from "react-native";
 import PagerView from "react-native-pager-view";
-import { CsvRow, Filters, useStore } from "@/store/store";
+import { CsvRow, Filters, MyCsv, useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 import { loadPage, saveDone, savePage } from "@/db/db";
 import ViewShot from "react-native-view-shot";
 import { RightBar } from "@/components/rightbar";
 import { useNavigation } from "expo-router";
+import RNFS from "react-native-fs";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
@@ -63,9 +64,29 @@ export default function PagerScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Button title="☰" onPress={toggleRightBar} />,
+      headerRight: () => (
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            onPress={() => downloadCsv()}
+            style={{ marginRight: 10 }}
+          >
+            <Image
+              source={require("../assets/images/upload.png")}
+              style={{ width: 25, height: 25 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <Button title="☰" onPress={toggleRightBar} />
+        </View>
+      ),
     });
   }, [navigation]);
+
+  const downloadCsv = () => {
+    if (data) {
+      downloadAsCSV(data);
+    }
+  };
 
   const toggleRightBar = () => {
     Animated.timing(rightBarSlideAnim, {
@@ -169,6 +190,45 @@ export default function PagerScreen() {
     </View>
   );
 }
+
+const downloadAsCSV = (data: MyCsv) => {
+  const csvString = toString(data.rows);
+  triggerDownload(data.name, csvString);
+};
+
+const triggerDownload = async (fileName: string, csvContent: string) => {
+  const filePath =
+    Platform.OS === "ios"
+      ? RNFS.DocumentDirectoryPath + "/" + fileName
+      : RNFS.ExternalDirectoryPath + "/" + fileName;
+
+  try {
+    await RNFS.writeFile(filePath, csvContent, "utf8");
+
+    console.log("CSV file saved at: ", filePath);
+  } catch (error) {
+    console.error("Error saving CSV file: ", error);
+  }
+};
+
+const toString = (rows: CsvRow[]): string => {
+  if (rows.length === 0) return "";
+
+  const headers = Object.keys(rows[0]);
+
+  return [
+    headers.join(","),
+    ...rows.map((row) => headers.map((h) => escapeNewlines(row[h])).join(",")),
+  ].join("\n");
+};
+
+// if we don't do this, multiple lines inside cells will appear as new rows
+const escapeNewlines = (value: string) => {
+  if (value.includes("\n")) {
+    return `"${value}"`;
+  }
+  return value;
+};
 
 const Page = ({
   content,
