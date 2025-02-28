@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Image,
+  Button,
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
@@ -16,6 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import { loadPage, saveDone, savePage } from "@/db/db";
 import ViewShot from "react-native-view-shot";
 import { RightBar } from "@/components/rightbar";
+import { useNavigation } from "expo-router";
 
 export default function PagerScreen() {
   const data = useStore((state) => state.data);
@@ -33,6 +35,17 @@ export default function PagerScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const pagerRef = useRef<PagerView | null>(null);
+
+  const navigation = useNavigation();
+  const [showRightBar, setShowRightBar] = useState<boolean>(true);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button title="☰" onPress={() => setShowRightBar((prev) => !prev)} />
+      ),
+    });
+  }, [navigation]);
 
   // load index if saved
   useEffect(() => {
@@ -80,7 +93,7 @@ export default function PagerScreen() {
 
   return (
     <View style={styles.container}>
-      <RightBar />
+      {showRightBar && <RightBar />}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
