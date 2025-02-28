@@ -10,6 +10,7 @@ import {
   Keyboard,
   Image,
   Button,
+  Animated,
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, useStore } from "@/store/store";
@@ -38,14 +39,42 @@ export default function PagerScreen() {
 
   const navigation = useNavigation();
   const [showRightBar, setShowRightBar] = useState<boolean>(true);
+  const rightBarSlideAnim = useRef(new Animated.Value(1)).current;
+  const [rightBarPosition] = useState(new Animated.Value(-300));
+
+  // animate right bar in/out
+  useEffect(() => {
+    if (showRightBar) {
+      // animate in
+      Animated.timing(rightBarPosition, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      // animate out
+      Animated.timing(rightBarPosition, {
+        toValue: 60,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [showRightBar]);
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Button title="☰" onPress={() => setShowRightBar((prev) => !prev)} />
-      ),
+      headerRight: () => <Button title="☰" onPress={toggleRightBar} />,
     });
   }, [navigation]);
+
+  const toggleRightBar = () => {
+    Animated.timing(rightBarSlideAnim, {
+      toValue: showRightBar ? 0 : 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setShowRightBar((prev) => !prev);
+  };
 
   // load index if saved
   useEffect(() => {
@@ -93,7 +122,16 @@ export default function PagerScreen() {
 
   return (
     <View style={styles.container}>
-      {showRightBar && <RightBar />}
+      <Animated.View
+        style={[
+          styles.rightBarWrapper,
+          {
+            transform: [{ translateX: rightBarPosition }],
+          },
+        ]}
+      >
+        <RightBar />
+      </Animated.View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -443,5 +481,12 @@ const styles = StyleSheet.create({
   },
   cameraButton: {
     marginLeft: "auto",
+  },
+  rightBarWrapper: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    height: "100%",
+    width: 60,
   },
 });
