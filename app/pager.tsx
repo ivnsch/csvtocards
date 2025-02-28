@@ -15,7 +15,7 @@ import {
 import PagerView from "react-native-pager-view";
 import { CsvRow, Filters, MyCsv, useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
-import { loadPage, saveDone, savePage } from "@/db/db";
+import { loadPage, saveCSV, saveDone, savePage } from "@/db/db";
 import ViewShot from "react-native-view-shot";
 import { RightBar } from "@/components/rightbar";
 import { useNavigation } from "expo-router";
@@ -84,6 +84,7 @@ export default function PagerScreen() {
   }, [navigation]);
 
   const downloadCsv = async () => {
+    const data = useStore.getState().data;
     if (data) {
       await downloadAsCSV(data);
     }
@@ -386,6 +387,10 @@ const EditableValue = ({
 
   const handleChange = (newValue: string) => {
     updateCell(index, column, newValue);
+    const latestData = useStore.getState().data;
+    if (latestData) {
+      saveCSV(latestData);
+    }
   };
 
   const value = (): string => {
